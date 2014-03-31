@@ -7,6 +7,6 @@
     <string name="begin">Begin Test</string>
     <string name="label_results">Results</string>
     <string name="label_status">Status</string>
-    <string name="label_conn">Connection Type</string>
+    <string name="label_conn">Type</string>
 
 </resources>

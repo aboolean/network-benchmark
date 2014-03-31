@@ -1,14 +1,19 @@
 package com.unim.networkbenchmark;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
@@ -36,6 +41,7 @@ public class MainActivity extends ActionBarActivity {
 	private Handler handler;
 	private Thread currentThread;
 	private boolean isDownloading;
+	private BufferedWriter output;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +54,7 @@ public class MainActivity extends ActionBarActivity {
 		}
 		
 		handler = new Handler();
+		output = null;
 	}
 	
 	@Override
@@ -143,6 +150,20 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	public void downloadFile() {
+		// begin log file
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HHmmss");
+		Date date = new Date();
+		File output_file = new File(getFilesDir() + dateFormat.format(date) + ".log");
+		if (!output_file.exists()) {
+			try {
+				output_file.createNewFile();
+				FileWriter fw = new FileWriter(output_file.getAbsoluteFile());
+				output = new BufferedWriter(fw);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		// connection type
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo ni = cm.getActiveNetworkInfo();
@@ -159,6 +180,11 @@ public class MainActivity extends ActionBarActivity {
 		}
 		final String type = String.valueOf(ptype);
 
+		try {
+			output.write("ConnectionType: " + type + System.getProperty("line.separator"));
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		handler.post(new Runnable() {
 			public void run() {
 				conn.setText(type);
@@ -177,8 +203,10 @@ public class MainActivity extends ActionBarActivity {
 			time = System.currentTimeMillis();
 			final InputStream stream = website.openStream();
 			final int lag = (int) (System.currentTimeMillis() - time);
+			output.write("Latency: " + String.valueOf(lag) + " ms" + System.getProperty("line.separator"));
+			output.newLine();
 			handler.post(new Runnable() {
-				public void run() {;
+				public void run() {
 					latency.setText(String.valueOf(lag) + " ms");
 				}
 			});
@@ -191,7 +219,6 @@ public class MainActivity extends ActionBarActivity {
 			try {
 				byte[] buffer = new byte[1024];
 				int len = stream.read(buffer);
-				Log.d("len", String.valueOf(len));
 				while (len != -1) {
 				    fos.write(buffer, 0, len);
 				    bits += len;
@@ -199,6 +226,7 @@ public class MainActivity extends ActionBarActivity {
 					    // update every 20KB
 					    final int finBits = bits;
 					    final int finTime = (int) (System.currentTimeMillis() - time);
+					    output.write("DATA " + String.valueOf(bits) + " " + String.valueOf(finTime) + System.getProperty("line.separator"));
 					    handler.post(new Runnable() {
 							public void run() {
 								int percent = (int) (finBits/650924.0*100.0);
@@ -219,9 +247,10 @@ public class MainActivity extends ActionBarActivity {
 				        break;
 				    }
 				}
-				
+				output.newLine();
 				if (!currentThread.isInterrupted()){
 					final int finTime = (int) (System.currentTimeMillis() - time); // end time
+					output.write("TOTAL " + String.valueOf(650924.0) + " " + String.valueOf(finTime) + System.getProperty("line.separator"));
 					handler.post(new Runnable() {
 						public void run() {;
 							duration.setText(String.valueOf(finTime/1000.0) + " s");
@@ -238,6 +267,7 @@ public class MainActivity extends ActionBarActivity {
 				try {
 					stream.close();
 					fos.close();
+					output.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

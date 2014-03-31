@@ -50,7 +50,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" >
+        android:layout_alignParentTop="true"
+        android:stretchColumns="0" >
 
         <TableRow
             android:id="@+id/tableRow1"
@@ -121,8 +122,7 @@
             <TextView
                 android:id="@+id/out_progress"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:layout_height="wrap_content" />
         </TableRow>
 
         <TableRow

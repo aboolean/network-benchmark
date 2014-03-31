@@ -4,5 +4,9 @@
     <string name="app_name">Network Benchmark</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="begin">Begin Test</string>
+    <string name="label_results">Results</string>
+    <string name="label_status">Status</string>
+    <string name="label_conn">Connection Type</string>
 
 </resources>

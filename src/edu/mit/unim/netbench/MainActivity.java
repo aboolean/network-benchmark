@@ -18,6 +18,7 @@ import java.util.Date;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -42,6 +43,7 @@ public class MainActivity extends ActionBarActivity {
 	private Thread currentThread;
 	private boolean isDownloading;
 	private BufferedWriter output;
+	private String result_stream;
 		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,7 @@ public class MainActivity extends ActionBarActivity {
 		progress = (ProgressBar) findViewById(R.id.progressBar1);
 		
 		progress.setProgress(0);
+		results.setMovementMethod(new ScrollingMovementMethod());
 		
 		isDownloading = false;
 	}
@@ -194,6 +197,7 @@ public class MainActivity extends ActionBarActivity {
 			return;
 		
 		// download
+		result_stream = "";
 		long time = System.currentTimeMillis();
 		try {
 			URL website = new URL("http://web.mit.edu/21w.789/www/papers/griswold2004.pdf");
@@ -226,18 +230,19 @@ public class MainActivity extends ActionBarActivity {
 					    final int finBits = bits;
 					    final int finTime = (int) (System.currentTimeMillis() - time);
 					    output.write("DATA " + String.valueOf(bits) + " " + String.valueOf(finTime) + System.getProperty("line.separator"));
+					    result_stream = String.valueOf(bits) + " bits in " + String.valueOf(finTime) + " ms"+ System.getProperty("line.separator") + result_stream;
 					    handler.post(new Runnable() {
 							public void run() {
 								int percent = (int) (finBits/650924.0*100.0);
 								if(percent > 100)
 									percent = 100;
 								ratio.setText(String.valueOf(percent) + "%");
-								Log.d("UPDATE",String.valueOf(percent));
 								progress.setProgress(percent);
 								double avgSpeed = 0;
 								if (finTime != 0)
 									avgSpeed = finBits/finTime;
 								speed.setText(String.format("%.2f",avgSpeed) + " KB/s");
+								results.setText(result_stream);
 							}
 						});
 				    }

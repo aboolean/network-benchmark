@@ -9,28 +9,11 @@
     android:screenOrientation="portrait"
     tools:context="edu.mit.unim.netbench.MainActivity$PlaceholderFragment" >
 
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" >
-
-        <TextView
-            android:id="@+id/out_results"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:lines="8"
-            android:text="" />
-    </ScrollView>
-
     <Button
         android:id="@+id/button1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/scrollView1"
+        android:layout_alignLeft="@+id/out_results"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="20dp"
         android:onClick="pressButton"
@@ -40,8 +23,8 @@
         android:id="@+id/results_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/scrollView1"
-        android:layout_alignLeft="@+id/scrollView1"
+        android:layout_above="@+id/out_results"
+        android:layout_alignLeft="@+id/out_results"
         android:text="@string/label_results"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -176,5 +159,16 @@
         android:layout_marginTop="5dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true" />
+
+    <TextView
+        android:id="@+id/out_results"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="5dp"
+        android:lines="8"
+        android:scrollbars="vertical" />
 
 </RelativeLayout>
